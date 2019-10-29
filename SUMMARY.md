@@ -1,4 +1,6 @@
 # Table of contents
 
-* [Queue](README.md)
+* [Preface](README.md)
+* [Queue](queue.md)
+* [Artisan Console](artisan-console.md)
 
