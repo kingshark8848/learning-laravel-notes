@@ -3,4 +3,5 @@
 * [Preface](README.md)
 * [Queue](queue.md)
 * [Artisan Console](artisan-console.md)
+* [Model](model.md)
 
