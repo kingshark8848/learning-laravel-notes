@@ -26,3 +26,7 @@ When timeout happened, the job immediately failed \(no matter how many retries\)
 
 Queue dispatching/construction cannot serialize **closure**. That means any object you passed into Job \(via dispatch or constructor\) cannot have **closure properties**, or _recursively_ have closure properties in his all object properties.
 
+## Laravel Horizon
+
+* [ ] TODO
+
