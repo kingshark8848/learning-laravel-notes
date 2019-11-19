@@ -22,3 +22,7 @@ retry\_after = 60, timeout = 90, when job runs past 60 second, it will be sent t
 When timeout happened, the job immediately failed \(no matter how many retries\).
 {% endhint %}
 
+## queue limit: constructor don't accept closure
+
+Queue dispatching/construction cannot serialize **closure**. That means any object you passed into Job \(via dispatch or constructor\) cannot have **closure properties**, or _recursively_ have closure properties in his all object properties.
+
