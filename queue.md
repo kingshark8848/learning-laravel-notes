@@ -28,5 +28,5 @@ Queue dispatching/construction cannot serialize **closure**. That means any obje
 
 ## Laravel Horizon
 
-* [ ] Doing...
+* [ ] Test
 
