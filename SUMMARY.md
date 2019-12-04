@@ -5,3 +5,7 @@
 * [Artisan Console](artisan-console.md)
 * [Model](model.md)
 
+## Database
+
+* [Pagination](database/pagination.md)
+
