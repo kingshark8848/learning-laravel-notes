@@ -26,7 +26,7 @@ When timeout happened, the job immediately failed \(no matter how many retries\)
 
 Queue dispatching/construction cannot serialize **closure**. That means any object you passed into Job \(via dispatch or constructor\) cannot have **closure properties**, or _recursively_ have closure properties in his all object properties.
 
-## code changes, queue should be restart to reflect changes
+## after code changes, queue should be restart to reflect changes
 
 When your code changes, queue should be restart \( use artisan / supervisor / horizon command to do it based on your case \) to let them works, or queue will use code before change.
 
