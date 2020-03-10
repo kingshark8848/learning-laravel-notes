@@ -10,7 +10,7 @@ In a request life cycle, if any model are instantiating, it will first call `boo
 
 How to execute boot process? look at `bootTraits()` function here:
 
-it will find all traits current model used,  and **execute any static function whose name start with "boot"**. e.g:
+it will find all traits current model used,  and **execute every trait's static function whose name is "boot\[Trait-Name\]"**. e.g:
 
  `protected static function bootLogsActivity()` in `LogsActivity` trait 
 
