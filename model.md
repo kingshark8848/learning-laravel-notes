@@ -14,6 +14,8 @@ it will find all traits current model used,  and **execute every trait's static 
 
  `protected static function bootLogsActivity()` in `LogsActivity` trait 
 
+![flowchart](.gitbook/assets/image.png)
+
 {% hint style="info" %}
 Only when instantiating a model, and this model has not booted before in current request life cycle, it would boot! 
 {% endhint %}
