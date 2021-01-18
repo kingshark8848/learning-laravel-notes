@@ -6,7 +6,11 @@ description: Tips about model
 
 ## model's boot
 
-In a request life cycle, if any model are instantiating, it will first call `bootIfNotBooted()` function to boot the model. As the function name indicates, it would execute boot process only if it was not booted in this request life cycle.
+In a request life cycle, if any model are instantiating, it will first call `bootIfNotBooted()` function to boot the model class. As the function name indicates, it would execute boot process if this model **class** was not booted in this request life cycle.
+
+{% hint style="info" %}
+model boots is on the class level, not instance level. That means the same class of models at most boots once in one request cycle.
+{% endhint %}
 
 How to execute boot process? look at `bootTraits()` function here:
 
@@ -17,6 +21,10 @@ it will find all traits current model used,  and **execute every trait's static 
 ![flowchart](.gitbook/assets/image.png)
 
 {% hint style="info" %}
-Only when instantiating a model, and this model has not booted before in current request life cycle, it would boot! 
+Only when instantiating a model, and this model class has not booted before in current request life cycle, it would boot! 
+{% endhint %}
+
+{% hint style="info" %}
+booted Model classes \(class full name\) are recorded in Model's static property`$booted` \(Model::booted\)
 {% endhint %}
 
