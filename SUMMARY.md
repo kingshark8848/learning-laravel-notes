@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Preface](README.md)
+* [Auth](auth.md)
 * [Queue](queue.md)
 * [Artisan Console](artisan-console.md)
 * [Model](model.md)
