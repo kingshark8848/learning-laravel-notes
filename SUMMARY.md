@@ -15,3 +15,7 @@
 
 * [Websocket](broadcasting/websocket.md)
 
+---
+
+* [Add a Command to simulate API request via Command line](add-a-command-to-simulate-api-request-via-command-line.md)
+
