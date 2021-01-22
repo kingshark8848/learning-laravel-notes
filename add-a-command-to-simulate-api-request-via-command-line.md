@@ -78,6 +78,10 @@ class LocalRouteTest extends Command
 usage:
 
 ```bash
+php artisan test:local-route /horizon/api/stats
+```
+
+```bash
 php artisan test:local-route /api/v1/admin/me -U 1
 ```
 
