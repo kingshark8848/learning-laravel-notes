@@ -18,6 +18,7 @@ namespace App\Console\Commands;
 use App\Model\User;
 use Dingo\Api\Http\Request;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LocalRouteTest extends Command
@@ -32,6 +33,7 @@ class LocalRouteTest extends Command
                             {method : The request method. e.g: GET|POST|PUT|DELETE, etc}
                             {--P|parameters= : Parameter JSON string. }
                             {--U|user_id= : Binding user ID}
+                            {--ip= : mock a ip address}
     ';
 
     /**
@@ -66,7 +68,13 @@ class LocalRouteTest extends Command
         $params = $this->option("parameters");
         $params = $params ? json_decode($params, true) : [];
 
+        $ip = $this->option("ip") or '0.0.0.0';
+
+        Log::alert("someone attempted to execute Test Local Route command, uri: {$uri}");
+
         $req = Request::create($uri, $method, $params);
+
+        $req->server->add(['REMOTE_ADDR' => $ip]);
 
         if ($userId){
             /** @var User $user */
@@ -83,7 +91,6 @@ class LocalRouteTest extends Command
         $this->info($responseBody);
     }
 }
-
 
 ```
 
