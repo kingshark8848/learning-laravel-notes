@@ -16,8 +16,9 @@ Register it in Kernel and edit it:
 namespace App\Console\Commands;
 
 use App\Model\User;
+use Dingo\Api\Http\Request;
 use Illuminate\Console\Command;
-use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LocalRouteTest extends Command
 {
@@ -28,6 +29,8 @@ class LocalRouteTest extends Command
      */
     protected $signature = 'test:local-route
                             {uri : The request URI}
+                            {method : The request method. e.g: GET|POST|PUT|DELETE, etc}
+                            {--P|parameters= : Parameter JSON string. }
                             {--U|user_id= : Binding user ID}
     ';
 
@@ -57,14 +60,22 @@ class LocalRouteTest extends Command
     public function handle()
     {
         $uri = $this->argument('uri');
+        $method = $this->argument('method');
         $userId = $this->option("user_id");
 
-        $req = Request::create($uri, 'GET');
+        $params = $this->option("parameters");
+        $params = $params ? json_decode($params, true) : [];
+
+        $req = Request::create($uri, $method, $params);
 
         if ($userId){
             /** @var User $user */
             $user = User::query()->findOrFail($userId);
-            auth()->setUser($user);
+//            auth()->setUser($user);
+
+            $token = JWTAuth::fromUser($user);
+//            $req->headers->set('Authorization', "Bearer {$token}");
+            $req->query->set("token", $token);
         }
 
         $res = app()->handle($req);
@@ -73,16 +84,17 @@ class LocalRouteTest extends Command
     }
 }
 
+
 ```
 
 usage:
 
 ```bash
-php artisan test:local-route /horizon/api/stats
+php artisan test:local-route /horizon/api/stats GET
 ```
 
 ```bash
-php artisan test:local-route /api/v1/admin/me -U 1
+php artisan test:local-route /api/v1/admin/me GET -U 1
 ```
 
 
