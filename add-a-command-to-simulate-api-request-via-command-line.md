@@ -97,5 +97,7 @@ php artisan test:local-route /horizon/api/stats GET
 php artisan test:local-route /api/v1/admin/me GET -U 1
 ```
 
-
+```bash
+php artisan test:local-route /api/v1/admin/dashboard_folder/me POST -U 1 -P '{"name": "command_created_dashboard"}'
+```
 
