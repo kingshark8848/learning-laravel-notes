@@ -14,7 +14,7 @@ model boots is on the class level, not instance level. That means the same class
 
 How to execute boot process? look at `bootTraits()` function here:
 
-it will find all traits current model used,  and **execute every trait's static function whose name is "boot\[Trait-Name\]"**. e.g:
+it will find all traits current model used \(_all traits used by a class, its parent classes and trait of their traits_\),  and **execute every trait's static function whose name is "boot\[Trait-Name\]"**. e.g:
 
  `protected static function bootLogsActivity()` in `LogsActivity` trait 
 
