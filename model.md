@@ -28,3 +28,124 @@ Only when instantiating a model, and this model class has not booted before in c
 booted Model classes \(class full name\) are recorded in Model's static property`$booted` \(Model::booted\)
 {% endhint %}
 
+## Recursive Relationships \( parent - children tree \)
+
+In reality, there are many cases that models are organized in a tree structure. for example, a team might has one parent team, and multiple child teams. The table in RDBMS to store those teams is like this:
+
+![](.gitbook/assets/image%20%281%29.png)
+
+How to get child teams in a nested and recursive way? Just define the relation in the Team model in this way:
+
+{% code title="Team.php" %}
+```php
+public function childTeams()
+{
+    return $this->hasMany(Team::class, 'parent_id');
+}
+
+public function childTeamRec()
+{
+    return $this->childTeams()->with('childTeamRec')->orderBy('display_num');
+}
+```
+{% endcode %}
+
+Here is an example Laravel Command to print a team's ALL child teams in a tree structure.
+
+{% code title="PrintTeamsStructure.php" %}
+```php
+<?php
+
+namespace App\Console\Commands;
+
+use App\Model\Team;
+use Illuminate\Console\Command;
+
+class PrintTeamsStructure extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'maint:print-teams-structure
+                            {team_id : The root team ID}
+    ';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Print teams structure';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        $teamId =  $this->argument('team_id');
+
+        $this->info("health check finished!");
+
+        $team1 = Team::with("childTeams")->find($teamId);
+        $this->_printRec($team1);
+    }
+
+    protected function _printRec(Team $team, int $indent=0, $lastList=[])
+    {
+        $prefix = "";
+        if ($indent != 0){
+            $countLastList = count($lastList);
+            foreach ($lastList as $key => $isLast){
+                if ($key == $countLastList-1) {
+                    break;
+                }
+
+                $prefix .= $isLast ? " " : "│";
+            }
+
+            $prefix .= $lastList[$countLastList-1] ? "└" : "├";
+        }
+
+        $this->info($prefix.$team->id);
+
+        $childCount = $team->childTeams->count();
+        foreach ($team->childTeams as $index => $childTeam){
+            $last = $index == $childCount -1;
+            $newLastList = array_merge($lastList, [$last]);
+
+            $this->_printRec($childTeam, $indent+1, $newLastList);
+        }
+    }
+}
+
+```
+{% endcode %}
+
+```bash
+$ php artisan maint:print-teams-structure 1
+
+1    
+├2   
+│├5  
+││├6 
+│││└8
+││└7 
+│└9  
+└3   
+ └4  
+```
+
