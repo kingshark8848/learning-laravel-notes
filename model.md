@@ -70,6 +70,7 @@ class PrintTeamsStructure extends Command
      */
     protected $signature = 'maint:print-teams-structure
                             {team_id : The root team ID}
+                            {--I|indent= : indent(optional, integer that greater or equal to 1).default: 1}
     ';
 
     /**
@@ -97,37 +98,39 @@ class PrintTeamsStructure extends Command
     public function handle()
     {
         $teamId =  $this->argument('team_id');
-
-        $this->info("health check finished!");
+        $indent = (int)$this->option("indent");
+        if ($indent<=0){
+            $indent = 1;
+        }
 
         $team1 = Team::with("childTeams")->find($teamId);
-        $this->_printRec($team1);
+        $this->_printRec($team1, [], $indent);
     }
 
-    protected function _printRec(Team $team, int $indent=0, $lastList=[])
+    protected function _printRec(Team $team, $lastList=[], $indent = 1)
     {
         $prefix = "";
-        if ($indent != 0){
+        if (count($lastList) != 0){
             $countLastList = count($lastList);
             foreach ($lastList as $key => $isLast){
                 if ($key == $countLastList-1) {
                     break;
                 }
 
-                $prefix .= $isLast ? " " : "│";
+                $prefix .= ($isLast ? " " : "│").str_repeat(" ", $indent-1);
             }
 
-            $prefix .= $lastList[$countLastList-1] ? "└" : "├";
+            $prefix .= ($lastList[$countLastList-1] ? "└" : "├").str_repeat("─", $indent-1);
         }
 
-        $this->info($prefix.$team->id);
+        $this->info($prefix.$team->id.":".$team->name);
 
         $childCount = $team->childTeams->count();
         foreach ($team->childTeams as $index => $childTeam){
             $last = $index == $childCount -1;
             $newLastList = array_merge($lastList, [$last]);
 
-            $this->_printRec($childTeam, $indent+1, $newLastList);
+            $this->_printRec($childTeam, $newLastList, $indent);
         }
     }
 }
