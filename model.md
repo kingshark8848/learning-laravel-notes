@@ -71,6 +71,7 @@ class PrintTeamsStructure extends Command
     protected $signature = 'maint:print-teams-structure
                             {team_id : The root team ID}
                             {--I|indent= : indent(optional, integer that greater or equal to 1).default: 1}
+                            {--D|detail_flag : flag to show team details(optional). }
     ';
 
     /**
@@ -102,12 +103,13 @@ class PrintTeamsStructure extends Command
         if ($indent<=0){
             $indent = 1;
         }
+        $detailFlag = $this->option("detail_flag");
 
         $team1 = Team::with("childTeams")->find($teamId);
-        $this->_printRec($team1, [], $indent);
+        $this->_printRec($team1, [], $indent, $detailFlag);
     }
 
-    protected function _printRec(Team $team, $lastList=[], $indent = 1)
+    protected function _printRec(Team $team, $lastList=[], $indent = 1, bool $detailFlag=false)
     {
         $prefix = "";
         if (count($lastList) != 0){
@@ -123,32 +125,54 @@ class PrintTeamsStructure extends Command
             $prefix .= ($lastList[$countLastList-1] ? "└" : "├").str_repeat("─", $indent-1);
         }
 
-        $this->info($prefix.$team->id.":".$team->name);
+        $teamInfo = $prefix.$team->id;
+        if ($detailFlag){
+            $teamInfo .= ":".$team->name;
+        }
+
+        $this->info($teamInfo);
 
         $childCount = $team->childTeams->count();
         foreach ($team->childTeams as $index => $childTeam){
             $last = $index == $childCount -1;
             $newLastList = array_merge($lastList, [$last]);
 
-            $this->_printRec($childTeam, $newLastList, $indent);
+            $this->_printRec($childTeam, $newLastList, $indent, $detailFlag);
         }
     }
 }
+
 
 ```
 {% endcode %}
 
 ```bash
-$ php artisan maint:print-teams-structure 1
+php artisan maint:print-teams-structure 1
 
-1    
-├2   
-│├5  
-││├6 
-│││└8
-││└7 
-│└9  
-└3   
- └4  
+1
+├10
+│└5
+│ ├2
+│ ├6
+│ │└8
+│ └7
+└11
+ └3
+  ├4
+  └9
+
+php artisan maint:print-teams-structure 1 -I 2 -D
+
+1:System Administrator
+├─10:Test Team6
+│ └─5:Test Team
+│   ├─2:Operations Team
+│   ├─6:Test Team2
+│   │ └─8:Test Team4
+│   └─7:Test Team3
+└─11:Test Team7
+  └─3:Marketing Operation
+    ├─4:Finance Team
+    └─9:Test Team5
 ```
 
